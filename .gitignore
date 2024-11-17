@@ -1,2 +1,4 @@
 /node_modules
-.envnpm-debug.log
+.env
+npm-debug.log
+./server/.env
