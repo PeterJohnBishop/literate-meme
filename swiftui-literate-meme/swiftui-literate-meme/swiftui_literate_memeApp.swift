@@ -37,7 +37,7 @@ struct swiftui_literate_memeApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginUserView()
         }
         .modelContainer(sharedModelContainer)
     }
