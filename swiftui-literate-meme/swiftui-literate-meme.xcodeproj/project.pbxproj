@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B1DB271A2CEBBDA8001232A1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B1DB27192CEBBDA8001232A1 /* FirebaseAuth */; };
+		B1DB271D2CEBBFD6001232A1 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = B1DB271C2CEBBFD6001232A1 /* SocketIO */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B1DB27052CEA98FE001232A1 /* swiftui-literate-meme.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "swiftui-literate-meme.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1DB271A2CEBBDA8001232A1 /* FirebaseAuth in Frameworks */,
+				B1DB271D2CEBBFD6001232A1 /* SocketIO in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +72,8 @@
 			);
 			name = "swiftui-literate-meme";
 			packageProductDependencies = (
+				B1DB27192CEBBDA8001232A1 /* FirebaseAuth */,
+				B1DB271C2CEBBFD6001232A1 /* SocketIO */,
 			);
 			productName = "swiftui-literate-meme";
 			productReference = B1DB27052CEA98FE001232A1 /* swiftui-literate-meme.app */;
@@ -94,6 +103,10 @@
 			);
 			mainGroup = B1DB26FC2CEA98FE001232A1;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B1DB27182CEBBDA8001232A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				B1DB271B2CEBBFD6001232A1 /* XCRemoteSwiftPackageReference "socket" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B1DB27062CEA98FE001232A1 /* Products */;
 			projectDirPath = "";
@@ -324,6 +337,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B1DB27182CEBBDA8001232A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.5.0;
+			};
+		};
+		B1DB271B2CEBBFD6001232A1 /* XCRemoteSwiftPackageReference "socket" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B1DB27192CEBBDA8001232A1 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1DB27182CEBBDA8001232A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		B1DB271C2CEBBFD6001232A1 /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1DB271B2CEBBFD6001232A1 /* XCRemoteSwiftPackageReference "socket" */;
+			productName = SocketIO;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B1DB26FD2CEA98FE001232A1 /* Project object */;
 }

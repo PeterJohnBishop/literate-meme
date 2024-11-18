@@ -34,12 +34,16 @@ struct ContentView: View {
                     }
                 }
             }
+            .onAppear{
+                        SocketService.shared.socket.connect()
+                    }
         } detail: {
             Text("Select an item")
         }
     }
 
     private func addItem() {
+        SocketService.shared.socket.emit("fromSwiftUI", ["message": "AddItem pressed"])
         withAnimation {
             let newItem = Item(timestamp: Date())
             modelContext.insert(newItem)
