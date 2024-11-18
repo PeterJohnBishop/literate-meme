@@ -27,10 +27,21 @@ import Observation
               } else {
                   self.success = true
                   self.status = "User created!"
+                  self.user = Auth.auth().currentUser
               }
-             print(self.status)
           }
         }
+    
+    func GetCurrentUser() {
+        if Auth.auth().currentUser != nil {
+            self.success = true
+            self.status = "Found user uid: \(String(describing: Auth.auth().currentUser?.uid))"
+            self.user = Auth.auth().currentUser
+        } else {
+            self.success = false
+            self.status = "User not found!"
+        }
+    }
     
     func ListenForUserState() {
         handle = Auth.auth().addStateDidChangeListener { (auth, user) in
@@ -51,22 +62,6 @@ import Observation
         }
     }
     
-
-    
-    func GetCurrentUser() -> Bool {
-        if Auth.auth().currentUser != nil {
-            self.success = true
-            self.status = "Found user uid: \(String(describing: Auth.auth().currentUser?.uid))"
-            self.loggedIn = true
-            return self.loggedIn
-        } else {
-            self.success = false
-            self.status = "User not found!"
-            self.loggedIn = false
-            return self.loggedIn
-        }
-    }
-    
     func SignInWithEmailAndPassword() {
         
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
@@ -76,6 +71,7 @@ import Observation
                    } else {
                        self.success = true
                        self.status = "Successfully signed in!"
+                       self.user = Auth.auth().currentUser
                    }
                     print(self.status)
                }

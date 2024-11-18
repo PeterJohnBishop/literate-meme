@@ -1,5 +1,5 @@
 //
-//  LoginView.swift
+//  RegisterView.swift
 //  swiftui-literate-meme
 //
 //  Created by m1_air on 11/18/24.
@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-struct LoginUserView: View {
+struct RegisterView: View {
     @State var auth: FireAuthViewModel = FireAuthViewModel()
-    @State var newUser: Bool = false
+    @State var confirmPassword: String = ""
+    @State var existingUser: Bool = false
     @State var showAlert: Bool = false
     
     
@@ -17,7 +18,7 @@ struct LoginUserView: View {
         NavigationStack{
                     VStack{
                         Spacer()
-                        Text("Login").font(.system(size: 34))
+                        Text("Register").font(.system(size: 34))
                             .fontWeight(.ultraLight)
                         Divider().padding()
                         TextField("Email", text: $auth.email)
@@ -32,10 +33,16 @@ struct LoginUserView: View {
                             .disableAutocorrection(true)
                             .padding()
                         
+                        SecureField("Confirm Password", text: $confirmPassword)
+                            .tint(.black)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .padding()
+                        
                         
                         Button("Submit", action: {
                             Task{
-                                auth.SignInWithEmailAndPassword()
+                                auth.CreateUser()
                             }
                            
                         })
@@ -58,12 +65,12 @@ struct LoginUserView: View {
                         Spacer()
                         HStack{
                             Spacer()
-                            Text("I don't have an account.").fontWeight(.ultraLight)
+                            Text("I have an account.").fontWeight(.ultraLight)
                             Button("Register", action: {
-                                newUser = true
+                                existingUser = true
                             }).foregroundStyle(.black)
                                 .fontWeight(.light)
-                                .navigationDestination(isPresented: $newUser, destination: {
+                                .navigationDestination(isPresented: $existingUser, destination: {
                                 })
                             Spacer()
                         }
@@ -75,5 +82,5 @@ struct LoginUserView: View {
 }
 
 #Preview {
-    LoginUserView()
+    RegisterView()
 }
