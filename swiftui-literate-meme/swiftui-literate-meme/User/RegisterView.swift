@@ -66,7 +66,7 @@ struct RegisterView: View {
                         HStack{
                             Spacer()
                             Text("I have an account.").fontWeight(.ultraLight)
-                            Button("Register", action: {
+                            Button("Login", action: {
                                 existingUser = true
                             }).foregroundStyle(.black)
                                 .fontWeight(.light)
