@@ -44,9 +44,9 @@ const LoginView = () => {
     
           if (loggedIn.success) {
             setUser(loggedIn.user)
-            socket.emit("reactLogin", {
-                "message": "React user logged in by Firebase Authentication!", 
-                "user": user
+            socket.emit("FireAuth", {
+                "message": "User logged in by Firebase Authentication via React.", 
+                "user": loggedIn.user
                 })
           } else {
             setError(loggedIn.error);

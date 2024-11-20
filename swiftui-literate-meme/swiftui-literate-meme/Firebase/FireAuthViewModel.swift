@@ -28,6 +28,9 @@ import Observation
                   self.success = true
                   self.status = "User created!"
                   self.user = Auth.auth().currentUser
+                  SocketService.shared.socket.emit("FireAuth", [
+                    "message": "User account successfully created in Firebase Authentication via iOS", "user": self.user
+                  ])
               }
           }
         }
@@ -72,6 +75,9 @@ import Observation
                        self.success = true
                        self.status = "Successfully signed in!"
                        self.user = Auth.auth().currentUser
+                       SocketService.shared.socket.emit("FireAuth", [
+                         "message": "User account successfully logged in to Firebase Authentication via iOS", "user": self.user
+                       ])
                    }
                     print(self.status)
                }

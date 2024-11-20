@@ -5,6 +5,7 @@ const cors = require('cors');
 const app = express();
 const http = require('http'); // Import HTTP module to work with Socket.IO
 const { Server } = require('socket.io');
+const s3Routes = require('./routes/S3Routes.js');
 
 dotenv.config();
 
@@ -31,6 +32,11 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(cors(corsOptions));
 
+app.get('/', (req, res) => {
+  res.send('Welcome to Literate-Meme Server!');
+});
+app.use('/s3', s3Routes);
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -47,16 +53,12 @@ const configureSocketIO = (io) => {
       socket.on('fromSwiftUI', (data) => {
         console.log(`Message received on port ${PORT}:`, data);
       });
-  
+
       socket.on('fromReact', (data) => {
         console.log(`Message received on port ${PORT}:`, data);
       });
-
-      socket.on('reactLogin', (data) => {
-        console.log(`Message received on port ${PORT}:`, data);
-      });
-
-      socket.on('reactRegister', (data) => {
+  
+      socket.on('FireAuth', (data) => {
         console.log(`Message received on port ${PORT}:`, data);
       });
   
