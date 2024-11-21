@@ -75,9 +75,6 @@ import Observation
                        self.success = true
                        self.status = "Successfully signed in!"
                        self.user = Auth.auth().currentUser
-                       SocketService.shared.socket.emit("FireAuth", [
-                         "message": "User account successfully logged in to Firebase Authentication via iOS", "user": self.user
-                       ])
                    }
                     print(self.status)
                }
@@ -92,6 +89,30 @@ import Observation
             } else {
                 self.success = true
                 self.status = "Email verification sent!"
+            }
+        }
+    }
+
+    //todo: convert existing functions to this format with completion
+    func UpdateProfile(displayName: String?, photoURL: URL?, completion: @escaping (Bool, String) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            completion(false, "No user is currently signed in.")
+            return
+        }
+        
+        let changeRequest = user.createProfileChangeRequest()
+        if let displayName = displayName {
+            changeRequest.displayName = displayName
+        }
+        if let photoURL = photoURL {
+            changeRequest.photoURL = photoURL
+        }
+        
+        changeRequest.commitChanges { error in
+            if let error = error {
+                completion(false, error.localizedDescription)
+            } else {
+                completion(true, "Profile updated successfully!")
             }
         }
     }

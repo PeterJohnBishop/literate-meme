@@ -64,6 +64,7 @@ struct LoginUserView: View {
                             }).foregroundStyle(.black)
                                 .fontWeight(.light)
                                 .navigationDestination(isPresented: $newUser, destination: {
+                                    RegisterView().navigationBarBackButtonHidden(true)
                                 })
                             Spacer()
                         }

@@ -44,7 +44,6 @@ struct RegisterView: View {
                             Task{
                                 auth.CreateUser()
                             }
-                           
                         })
                         .fontWeight(.ultraLight)
                         .foregroundColor(.black)
@@ -62,6 +61,9 @@ struct RegisterView: View {
                                     } message: {
                                         Text(auth.status)
                                     }
+                                    .navigationDestination(isPresented: $auth.success, destination: {
+                                        ProfileSetupView().navigationBarBackButtonHidden(true)
+                                    })
                         Spacer()
                         HStack{
                             Spacer()
@@ -71,6 +73,7 @@ struct RegisterView: View {
                             }).foregroundStyle(.black)
                                 .fontWeight(.light)
                                 .navigationDestination(isPresented: $existingUser, destination: {
+                                    LoginUserView().navigationBarBackButtonHidden(true)
                                 })
                             Spacer()
                         }
