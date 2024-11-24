@@ -3,9 +3,11 @@ const bodyParser = require('body-parser');
 const dotenv = require("dotenv");
 const cors = require('cors');
 const app = express();
+const mongoose = require('mongoose');
 const http = require('http'); // Import HTTP module to work with Socket.IO
 const { Server } = require('socket.io');
 const s3Routes = require('./routes/S3Routes.js');
+const validateFirebaseToken = require('./utils/validate.js')
 
 dotenv.config();
 
@@ -31,6 +33,12 @@ const corsOptions = {
 app.use(bodyParser.json());
 app.use(cors());
 app.use(cors(corsOptions));
+
+app.use(validateFirebaseToken);
+
+app.post("/secured-endpoint", validateFirebaseToken, (req, res) => {
+  res.status(200).json({ message: "Authorized request", user: req.user });
+});
 
 app.get('/', (req, res) => {
   res.send('Welcome to Literate-Meme Server!');
@@ -67,13 +75,16 @@ const configureSocketIO = (io) => {
       });
     });
   };
-  
-  configureSocketIO(io); 
-  
 
-//routes
+configureSocketIO(io); 
+  
+mongoose.connect(process.env.MONGODB_URI);
+const connection = mongoose.connection;
+connection.once("open", () => {
+  console.log(`MongoDB database connection to established successfully`);
+});
 
 server.listen(PORT, () => {
-  console.log(`HTTP server and Socket.IO running on http://localhost:${PORT}`);
+  console.log(`HTTP server and Socket.IO listening on http://localhost:${PORT}`);
 });
 

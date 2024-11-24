@@ -37,7 +37,6 @@ struct LoginUserView: View {
                             Task{
                                 auth.SignInWithEmailAndPassword()
                             }
-                           
                         })
                         .fontWeight(.ultraLight)
                         .foregroundColor(.black)
@@ -55,6 +54,9 @@ struct LoginUserView: View {
                                     } message: {
                                         Text(auth.status)
                                     }
+                                    .navigationDestination(isPresented: $auth.success, destination: {
+                                        ProfileView().navigationBarBackButtonHidden(true)
+                                    })
                         Spacer()
                         HStack{
                             Spacer()

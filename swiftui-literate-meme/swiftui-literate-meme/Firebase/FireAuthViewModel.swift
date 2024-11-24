@@ -16,6 +16,7 @@ import Observation
     var status: String = ""
     var loggedIn: Bool = false
     var user: User?
+    var token: String = ""
     
     private var handle: AuthStateDidChangeListenerHandle?
     
@@ -34,6 +35,24 @@ import Observation
               }
           }
         }
+    
+    func fetchFirebaseAuthToken() {
+        if let user = Auth.auth().currentUser {
+            user.getIDToken { token, error in
+                if let error = error {
+                    self.success = false
+                    self.status = "Error fetching ID token: \(error.localizedDescription)"
+                }
+                self.success = true
+                self.status = "Token retrieved!"
+                self.token = token!
+            }
+        } else {
+            self.success = false
+            self.status = "No user is signed in."
+        }
+
+    }
     
     func GetCurrentUser() {
         if Auth.auth().currentUser != nil {
