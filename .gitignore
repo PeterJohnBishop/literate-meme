@@ -1,9 +1,8 @@
+git rm --cached
+
 /node_modules
 .env
 npm-debug.log
 GoogleService-Info.plist
 ./swiftui-literate-meme/GoogleService-Info.plist
-.literate-meme-c5e53-firebase-adminsdk-c4zgi-c461206fda.json
-./server/uitls/literate-meme-c5e53-firebase-adminsdk-c4zgi-c461206fda.json
-git rm --cached
-/Users/m1_air/Development/literate-meme/server/utils/literate-meme-c5e53-firebase-adminsdk-c4zgi-c461206fda.json
+server/utils/literate-meme-c5e53-firebase-adminsdk-c4zgi-c461206fda.json

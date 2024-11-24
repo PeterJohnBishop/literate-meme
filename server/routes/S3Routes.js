@@ -4,6 +4,7 @@ const { S3Client } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 const fs = require('fs');
 const multer = require('multer');
+const validateFirebaseToken = require('../utils/validate.js')
 require('dotenv').config();
 
 const upload = multer({ dest: 'uploads/' });
@@ -35,7 +36,7 @@ async function uploadImageToS3(filePath, bucketName, key) {
   return fileUrl;
 }
 
-router.post('/upload', upload.single('image'), async (req, res) => {
+router.post('/upload', upload.single('image'), validateFirebaseToken, async (req, res) => {
   const bucketName = process.env.AWS_REKOGNITION_BUCKET;
   const filePath = req.file.path;
   const key = `uploads/${Date.now()}_${req.file.originalname}`;

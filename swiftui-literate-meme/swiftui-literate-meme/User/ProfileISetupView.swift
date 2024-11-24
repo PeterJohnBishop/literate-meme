@@ -68,7 +68,7 @@ struct ProfileSetupView: View {
                 Button(action: {
                     if let selectedImage = selectedImage {
                         Task{
-                            uploaded = await s3ViewModel.uploadImageToS3(image: selectedImage)
+                            uploaded = await s3ViewModel.uploadImageToS3(image: selectedImage, token: UserDefaults.standard.string(forKey: "authToken") ?? "invalidToken")
                         }
                     }
                 }, label: {
@@ -123,7 +123,18 @@ struct ProfileSetupView: View {
                 })
 
             }
-        }.onChange(of: uploaded, {
+        }.onAppear{
+            auth.fetchFirebaseAuthToken()
+        }
+        .onChange(of: auth.token, {
+            oldValue, newValue in
+            
+            if !newValue.isEmpty {
+                UserDefaults.standard.set(newValue, forKey: "authToken")
+                auth.GetCurrentUser()
+            }
+        })
+        .onChange(of: uploaded, {
             oldValue, newValue in
             
             if !newValue {
