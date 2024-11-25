@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 const http = require('http'); // Import HTTP module to work with Socket.IO
 const { Server } = require('socket.io');
 const s3Routes = require('./routes/S3Routes.js');
-const validateFirebaseToken = require('./utils/validate.js')
+const userRoutes = require('./routes/UserRoutes.js');
+const validateFirebaseToken = require('./utils/validate.js');
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ app.get('/', (req, res) => {
   res.send('Welcome to Literate-Meme Server!');
 });
 app.use('/s3', s3Routes);
+app.use('/users', userRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {

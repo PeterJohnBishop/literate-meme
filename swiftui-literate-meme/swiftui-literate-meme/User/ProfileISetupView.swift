@@ -12,6 +12,7 @@ struct ProfileSetupView: View {
     @State var auth: FireAuthViewModel = FireAuthViewModel()
     @State var s3ViewModel: S3ViewModel = S3ViewModel()
     @State var imagePickerViewModel: ImagePickerViewModel = ImagePickerViewModel()
+    @State var userViewModel: UserViewModel = UserViewModel()
     @State var selectedImage: UIImage?
     @State var showCamera: Bool = false
     @State var sourceType: SourceType = .camera
@@ -94,7 +95,15 @@ struct ProfileSetupView: View {
                     if let photoURL = URL(string: s3ViewModel.imageUrl) {
                         auth.UpdateProfile(displayName: inputText, photoURL: photoURL, completion: {
                             isSuccess, message in
-                            saved = isSuccess
+                            if isSuccess {
+                                Task{
+                                    userViewModel.token = UserDefaults.standard.string(forKey: "authToken")!
+                                    userViewModel.user.uid = auth.user!.uid
+                                    userViewModel.user.username = (auth.user?.displayName)!
+                                    userViewModel.user.userPhotoURL = (auth.user?.photoURL!.absoluteString)!
+                                    saved = await userViewModel.createNewUser()
+                                }
+                            }
                             errorMessage = message
                         })
                     } else {

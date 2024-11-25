@@ -15,7 +15,7 @@ struct ProfileView: View {
     @State var scannedText: String = ""
     @State var responseText: String = ""
     
-    func fetchSecuredData(token: String) {
+    func confirmSecureEndpoint(token: String) {
         guard let url = URL(string: "http://localhost:4000/secured-endpoint") else {
             responseText = "Invalid URL"
             return
@@ -64,7 +64,6 @@ struct ProfileView: View {
                         .fontWeight(.ultraLight)
                     Text(auth.user?.email ?? "").font(.system(size: 14))
                         .fontWeight(.ultraLight)
-                    Text(responseText)
                 }
                 Divider().padding()
                 VStack{
@@ -127,7 +126,7 @@ struct ProfileView: View {
                 
                 if !newValue.isEmpty {
                     UserDefaults.standard.set(newValue, forKey: "authToken")
-                    fetchSecuredData(token: UserDefaults.standard.string(forKey: "authToken") ?? "noToken")
+                    confirmSecureEndpoint(token: UserDefaults.standard.string(forKey: "authToken") ?? "noToken")
                     auth.GetCurrentUser()
                 }
             })
