@@ -58,34 +58,26 @@ import CryptoKit
             }
         }
     
-//    func fetchUser(byId userId: String) async -> Bool {
-//        guard let url = URL(string: "\(baseURL)/\(userId)") else { return false }
-//        
-//        // Retrieve the JWT token from UserDefaults
-//        guard let token = UserDefaults.standard.string(forKey: "jwt") else {
-//            self.error = "Error: No token found."
-//            return false
-//        }
-//
-//        var request = URLRequest(url: url)
-//        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-//
-//        do {
-//            let (data, response) = try await URLSession.shared.data(for: request)
-//
-//            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-//                let decodedUser = try JSONDecoder().decode(UserData.self, from: data)
-//                self.user = decodedUser
-//                return true
-//            } else {
-//                self.error = "Error: No user found with that ID."
-//                return false
-//            }
-//        } catch {
-//            self.error = "Error fetching user: \(error.localizedDescription)"
-//            return false
-//        }
-//    }
+    // Get a user by uid
+    func getUserByUid() async -> Bool {
+        guard let url = URL(string: "\(baseURL)/user/\(user.uid)") else { return false }
+
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                self.error = "Error fetching user by UID."
+                return false
+            }
+            self.user = try JSONDecoder().decode(UserModel.self, from: data)
+            return true
+        } catch {
+            self.error = "Error fetching user: \(error.localizedDescription)"
+            return false
+        }
+    }
     
     func fetchAllUsers() async -> Bool {
         guard let url = URL(string: "\(baseURL)/") else {
@@ -130,73 +122,61 @@ import CryptoKit
         }
     }
     
-//    func updateUser(userUpdate: UserData) async -> Bool {
-//        print("Updating user!")
-//        guard let url = URL(string: "\(baseURL)/\(userUpdate._id ?? "NoUser")") else { return false }
-//        
-//        // Retrieve the JWT token from UserDefaults
-//        guard let token = UserDefaults.standard.string(forKey: "jwt") else {
-//            self.error = "Error: No token found."
-//            return false
-//        }
-//
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "PUT"
-//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-//
-//        let body: [String: Any] = [
-//            "username": userUpdate.username,
-//            "email": userUpdate.email,
-//            "password": userUpdate.password,
-//        ]
-//
-//        guard let jsonData = try? JSONSerialization.data(withJSONObject: body, options: []) else { return false }
-//
-//        request.httpBody = jsonData
-//
-//        do {
-//            let (data, response) = try await URLSession.shared.data(for: request)
-//
-//            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-//                return true
-//            } else {
-//                self.error = "Error: Invalid response"
-//                return false
-//            }
-//        } catch {
-//            self.error = "Error updating user: \(error.localizedDescription)"
-//            return false
-//        }
-//    }
-//    
-//    func deleteUser(byId userId: String) async -> Bool {
-//        guard let url = URL(string: "\(baseURL)/\(userId)") else { return false }
-//        
-//        // Retrieve the JWT token from UserDefaults
-//        guard let token = UserDefaults.standard.string(forKey: "jwt") else {
-//            self.error = "Error: No token found."
-//            return false
-//        }
-//
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "DELETE"
-//        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-//
-//        do {
-//            let (_, response) = try await URLSession.shared.data(for: request)
-//
-//            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-//                self.error = "User deleted successfully"
-//                return true
-//            } else {
-//                self.error = "Error: Invalid response"
-//                return false
-//            }
-//        } catch {
-//            self.error = "Error deleting user: \(error.localizedDescription)"
-//            return false
-//        }
-//    }
+    // Update a user by uid
+    func updateUserByUid(uid: String) async -> Bool {
+        guard let url = URL(string: "\(baseURL)/user/\(uid)") else { return false }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let body: [String: Any] = [
+            "username": user.username,
+            "userPhotoURL": user.userPhotoURL,
+            "connections": user.connections,
+            "media": user.media,
+            "locationLat": user.locationLat,
+            "locationLong": user.locationLong
+        ]
+
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: body, options: []) else { return false }
+        request.httpBody = jsonData
+
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                return true
+            } else {
+                self.error = "Error updating user: \(response)"
+                return false
+            }
+        } catch {
+            self.error = "Error updating user: \(error.localizedDescription)"
+            return false
+        }
+    }
+
+    // Delete a user by uid
+    func deleteUserByUid(uid: String) async -> Bool {
+        guard let url = URL(string: "\(baseURL)/user/\(uid)") else { return false }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                return true
+            } else {
+                self.error = "Error deleting user: \(response)"
+                return false
+            }
+        } catch {
+            self.error = "Error deleting user: \(error.localizedDescription)"
+            return false
+        }
+    }
 
 }
