@@ -38,12 +38,10 @@ struct ProfileSetupView: View {
                     Image(systemName: "person.crop.circle")
                         .resizable()
                         .frame(width: 300, height: 300)
-                        .foregroundStyle(.black.opacity(0.2))
+                        .foregroundStyle(.black.opacity(1))
                         .fontWeight(.ultraLight)
-                        .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+                        .shadow(color: Color.black.opacity(0.3), radius: 10, x: 5, y: 15)
                 }
-//            Text("+Photo").font(.system(size: 34))
-//                .fontWeight(.ultraLight)
             HStack{
                 Spacer()
                 ImagePickerView(imagePickerViewModel: $imagePickerViewModel, uploadType: "profile")
@@ -52,19 +50,20 @@ struct ProfileSetupView: View {
                         if !newValue.isEmpty {
                             selectedImage = imagePickerViewModel.images[0]
                         }
-                    })
+                    }).padding()
                 Spacer()
                 Button(action: {
                     sourceType = .camera
                     self.showCamera.toggle()
                 }, label: {
-                    Image(systemName: "camera.circle.fill")
+                    Image(systemName: "person.fill.viewfinder")
                         .resizable()
                         .frame(width: 50, height: 50)
                         .foregroundStyle(.black)
+
                 }).sheet(isPresented: $showCamera) {
                     accessMediaView(selectedImage: $selectedImage, sourceType: sourceType).ignoresSafeArea()
-                }
+                }.padding()
                 Spacer()
                 Button(action: {
                     if let selectedImage = selectedImage {
@@ -84,11 +83,13 @@ struct ProfileSetupView: View {
                             .frame(width: 50, height: 50)
                             .foregroundStyle(.black)
                     }
-                })
+                }).padding()
                 Spacer()
             }.padding()
-            UnderlinedTextField(text: $inputText, next: $next, title: "", placeholder: "Username (REQUIRED)", underlineColor: .black)
-                           .padding()
+            if uploaded {
+                UnderlinedTextField(text: $inputText, next: $next, title: "", placeholder: "Username", underlineColor: .black)
+                    .padding()
+            }
             Spacer()
             if uploaded && !inputText.isEmpty {
                 Button {

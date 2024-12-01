@@ -13,7 +13,7 @@ import Observation
     var email: String = ""
     var password: String = ""
     var success: Bool = false
-    var status: String = ""
+    var response: String = ""
     var loggedIn: Bool = false
     var user: User?
     var token: String = ""
@@ -24,14 +24,11 @@ import Observation
          Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
               if error != nil {
                   self.success = false
-                  self.status = error?.localizedDescription ?? ""
+                  self.response = error?.localizedDescription ?? ""
               } else {
                   self.success = true
-                  self.status = "User created!"
+                  self.response = "User created!"
                   self.user = Auth.auth().currentUser
-                  SocketService.shared.socket.emit("FireAuth", [
-                    "message": "User account successfully created in Firebase Authentication via iOS", "user": self.user
-                  ])
               }
           }
         }
@@ -41,15 +38,15 @@ import Observation
             user.getIDToken { token, error in
                 if let error = error {
                     self.success = false
-                    self.status = "Error fetching ID token: \(error.localizedDescription)"
+                    self.response = "Error fetching ID token: \(error.localizedDescription)"
                 }
                 self.success = true
-                self.status = "Token retrieved!"
+                self.response = "Token retrieved!"
                 self.token = token!
             }
         } else {
             self.success = false
-            self.status = "No user is signed in."
+            self.response = "No user is signed in."
         }
 
     }
@@ -57,11 +54,11 @@ import Observation
     func GetCurrentUser() {
         if Auth.auth().currentUser != nil {
             self.success = true
-            self.status = "Found user uid: \(String(describing: Auth.auth().currentUser?.uid))"
+            self.response = "Found user uid: \(String(describing: Auth.auth().currentUser?.uid))"
             self.user = Auth.auth().currentUser
         } else {
             self.success = false
-            self.status = "User not found!"
+            self.response = "User not found!"
         }
     }
     
@@ -89,13 +86,12 @@ import Observation
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
                    if error != nil {
                        self.success = false
-                       self.status = error?.localizedDescription ?? ""
+                       self.response = error?.localizedDescription ?? ""
                    } else {
                        self.success = true
-                       self.status = "Successfully signed in!"
+                       self.response = "Successfully signed in!"
                        self.user = Auth.auth().currentUser
                    }
-                    print(self.status)
                }
            
     }
@@ -104,10 +100,10 @@ import Observation
         Auth.auth().currentUser?.sendEmailVerification { error in
             if error != nil {
                 self.success = false
-                self.status = error?.localizedDescription ?? ""
+                self.response = error?.localizedDescription ?? ""
             } else {
                 self.success = true
-                self.status = "Email verification sent!"
+                self.response = "Email verification sent!"
             }
         }
     }
@@ -140,10 +136,10 @@ import Observation
         Auth.auth().currentUser?.sendEmailVerification(beforeUpdatingEmail: newEmail) { error in
             if error != nil {
                 self.success = false
-                self.status = error?.localizedDescription ?? ""
+                self.response = error?.localizedDescription ?? ""
             } else {
                 self.success = true
-                self.status = "Email updated!"
+                self.response = "Email updated!"
             }
         }
     }
@@ -152,10 +148,10 @@ import Observation
         Auth.auth().currentUser?.updatePassword(to: newPassword) { error in
             if error != nil {
                 self.success = false
-                self.status = error?.localizedDescription ?? ""
+                self.response = error?.localizedDescription ?? ""
             } else {
                 self.success = true
-                self.status = "Password updated!"
+                self.response = "Password updated!"
             }
         }
     }
@@ -164,10 +160,10 @@ import Observation
         Auth.auth().sendPasswordReset(withEmail: email) { error in
             if error != nil {
                 self.success = false
-                self.status = error?.localizedDescription ?? ""
+                self.response = error?.localizedDescription ?? ""
             } else {
                 self.success = true
-                self.status = "Password reset sent to \(self.email)!"
+                self.response = "Password reset sent to \(self.email)!"
             }
         }
     }
@@ -178,10 +174,10 @@ import Observation
         user?.delete { error in
             if error != nil {
                 self.success = false
-                self.status = error?.localizedDescription ?? ""
+                self.response = error?.localizedDescription ?? ""
             } else {
                 self.success = true
-                self.status = "User deleted!"
+                self.response = "User deleted!"
             }
         }
     }
@@ -191,10 +187,10 @@ import Observation
         do {
           try firebaseAuth.signOut()
             self.success = true
-            self.status = "Signed out!"
+            self.response = "Signed out!"
         } catch let signOutError as NSError {
             self.success = false
-            self.status = signOutError.description
+            self.response = signOutError.description
         }
     }
 }

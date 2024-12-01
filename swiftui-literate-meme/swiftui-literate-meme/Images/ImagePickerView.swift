@@ -18,7 +18,7 @@ struct ImagePickerView: View {
             maxSelectionCount: uploadType == "profile" ? 1 : 6,
             matching: uploadType == "profile" ? .any(of: [.images]) : .any(of: [.images, .videos]),
             photoLibrary: .shared()) {
-                Image(systemName: "photo.circle.fill").resizable()
+                Image(systemName: "person.2.crop.square.stack.fill").resizable()
                     .fontWeight(.ultraLight)
                     .foregroundStyle(.black)
                     .frame(width: 50, height: 50)

@@ -38,11 +38,13 @@ struct RegisterView: View {
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
                             .padding()
-                        
-                        
                         Button("Submit", action: {
-                            Task{
-                                auth.CreateUser()
+                            if confirmPassword == auth.password {
+                                Task{
+                                    auth.CreateUser()
+                                }
+                            } else {
+                                auth.response = "Passwords must match!"
                             }
                         })
                         .fontWeight(.ultraLight)
@@ -53,13 +55,21 @@ struct RegisterView: View {
                                 .fill(Color.white)
                                 .shadow(color: .gray.opacity(0.4), radius: 4, x: 2, y: 2)
                         )
+                        .onChange(of: auth.response, {
+                            oldResponse, newResponse in
+                            if newResponse != "" {
+                                showAlert = true
+                            }
+                        })
                         .alert("Error", isPresented: $showAlert) {
                                         Button("OK", role: .cancel) {
                                             auth.email = ""
                                             auth.password = ""
+                                            confirmPassword = ""
+                                            auth.response = ""
                                         }
                                     } message: {
-                                        Text(auth.status)
+                                        Text(auth.response)
                                     }
                                     .navigationDestination(isPresented: $auth.success, destination: {
                                         ProfileSetupView().navigationBarBackButtonHidden(true)
