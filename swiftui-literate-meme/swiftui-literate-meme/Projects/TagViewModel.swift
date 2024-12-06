@@ -1,25 +1,24 @@
 //
-//  UserViewModel.swift
+//  TagViewModel.swift
 //  swiftui-literate-meme
 //
-//  Created by m1_air on 11/18/24.
+//  Created by m1_air on 12/4/24.
 //
 
 import Foundation
 import Observation
-import CryptoKit
 
-@Observable class UserViewModel {
+@Observable class TagViewModel {
     
-    var user: UserModel = UserModel()
-    var users: [UserModel] = []
-    var baseURL: String = "http://127.0.0.1:4000/users"
+    var tag: TagModel = TagModel()
+    var tags: [TagModel] = []
+    var baseURL: String = "http://127.0.0.1:4000/tags"
     var error: String = ""
     var token: String = ""
     
-    func createNewUser() async -> Bool {
-            print("Creating a new user.")
-            guard let url = URL(string: "\(baseURL)/user") else { return false }
+    func createNewTag() async -> Bool {
+            print("Creating a new tag.")
+            guard let url = URL(string: "\(baseURL)/tag") else { return false }
 
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
@@ -28,9 +27,9 @@ import CryptoKit
 
 
             let body: [String: Any] = [
-                "uid": user.uid,
-                "username": user.username,
-                "userPhotoURL": user.userPhotoURL
+                "uid": tag.uid,
+                "icon": tag.icon,
+                "tag": tag.tag
             ]
 
             guard let jsonData = try? JSONSerialization.data(withJSONObject: body, options: []) else { return false}
@@ -41,23 +40,23 @@ import CryptoKit
                 let (_, response) = try await URLSession.shared.data(for: request)
 
                 if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                    print("New user successfully added to MongoDB.")
+                    print("New tag successfully added to MongoDB.")
                     return true
                 } else {
-                    self.error = "Error creating user: \(response)"
+                    self.error = "Error creating tag: \(response)"
                     print(self.error)
                     return false
                 }
             } catch {
-                self.error = "Error submitting data for new user: \(error.localizedDescription)"
+                self.error = "Error submitting data for new tag: \(error.localizedDescription)"
                 print(self.error)
                 return false
             }
         }
     
     // Get a user by uid
-    func getUserByUid() async -> Bool {
-        guard let url = URL(string: "\(baseURL)/user/\(user.uid)") else { return false }
+    func getTagByUid() async -> Bool {
+        guard let url = URL(string: "\(baseURL)/tag/\(tag.uid)") else { return false }
 
         var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -65,18 +64,18 @@ import CryptoKit
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                self.error = "Error fetching user by UID."
+                self.error = "Error fetching tag by UID."
                 return false
             }
-            self.user = try JSONDecoder().decode(UserModel.self, from: data)
+            self.tag = try JSONDecoder().decode(TagModel.self, from: data)
             return true
         } catch {
-            self.error = "Error fetching user: \(error.localizedDescription)"
+            self.error = "Error fetching tag: \(error.localizedDescription)"
             return false
         }
     }
     
-    func fetchAllUsers() async -> Bool {
+    func fetchAllTags() async -> Bool {
         guard let url = URL(string: "\(baseURL)/") else {
             self.error = "Invalid URL."
             return false
@@ -102,8 +101,8 @@ import CryptoKit
 
             if httpResponse.statusCode == 200 {
                 do {
-                    let decodedUsers = try JSONDecoder().decode([UserModel].self, from: data)
-                    self.users = decodedUsers
+                    let decodedTags = try JSONDecoder().decode([TagModel].self, from: data)
+                    self.tags = decodedTags
                     return true
                 } catch {
                     self.error = "Error decoding users: \(error.localizedDescription)"
@@ -120,8 +119,8 @@ import CryptoKit
     }
     
     // Update a user by uid
-    func updateUserByUid(uid: String) async -> Bool {
-        guard let url = URL(string: "\(baseURL)/user/\(uid)") else { return false }
+    func updateTagByUid(uid: String) async -> Bool {
+        guard let url = URL(string: "\(baseURL)/tag/\(uid)") else { return false }
 
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
@@ -129,8 +128,8 @@ import CryptoKit
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
         let body: [String: Any] = [
-            "username": user.username,
-            "userPhotoURL": user.userPhotoURL
+            "icon": tag.icon,
+            "tag": tag.tag
         ]
 
         guard let jsonData = try? JSONSerialization.data(withJSONObject: body, options: []) else { return false }
@@ -141,18 +140,18 @@ import CryptoKit
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                 return true
             } else {
-                self.error = "Error updating user: \(response)"
+                self.error = "Error updating tag: \(response)"
                 return false
             }
         } catch {
-            self.error = "Error updating user: \(error.localizedDescription)"
+            self.error = "Error updating tag: \(error.localizedDescription)"
             return false
         }
     }
 
     // Delete a user by uid
-    func deleteUserByUid(uid: String) async -> Bool {
-        guard let url = URL(string: "\(baseURL)/user/\(uid)") else { return false }
+    func deleteTagByUid(uid: String) async -> Bool {
+        guard let url = URL(string: "\(baseURL)/tag/\(uid)") else { return false }
 
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -163,13 +162,15 @@ import CryptoKit
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                 return true
             } else {
-                self.error = "Error deleting user: \(response)"
+                self.error = "Error deleting tag: \(response)"
                 return false
             }
         } catch {
-            self.error = "Error deleting user: \(error.localizedDescription)"
+            self.error = "Error deleting tag: \(error.localizedDescription)"
             return false
         }
     }
-
+    
 }
+
+

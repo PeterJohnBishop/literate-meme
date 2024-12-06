@@ -10,7 +10,6 @@ import SwiftUI
 
 struct UnderlinedTextField: View {
     @Binding var text: String
-    @Binding var next: Bool
     var title: String = ""
     var placeholder: String = ""
     var underlineColor: Color = .black

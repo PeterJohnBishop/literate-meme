@@ -17,23 +17,7 @@ const userSchema = new Schema(
         type: String,
         required: true,
         unique: true,
-    },
-    connections: {
-        type: Array,
-        required: false,
-    },
-    media: {
-      type: Array,
-      required: false,
-    },
-    locationLat: {
-      type: Number,
-      required: false,
-    },
-    locationLong: {
-      type: Number,
-      required: false,
-    },
+    }
   },
   {
     timestamps: true

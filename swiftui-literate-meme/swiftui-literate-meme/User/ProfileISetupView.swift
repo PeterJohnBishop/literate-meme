@@ -17,7 +17,6 @@ struct ProfileSetupView: View {
     @State var showCamera: Bool = false
     @State var sourceType: SourceType = .camera
     @State var uploaded: Bool = false
-    @State var next: Bool = false
     @State var inputText: String = ""
     @State var errorMessage: String = ""
     @State var showAlert: Bool = false
@@ -87,7 +86,7 @@ struct ProfileSetupView: View {
                 Spacer()
             }.padding()
             if uploaded {
-                UnderlinedTextField(text: $inputText, next: $next, title: "", placeholder: "Username", underlineColor: .black)
+                UnderlinedTextField(text: $inputText, title: "", placeholder: "Username", underlineColor: .black)
                     .padding()
             }
             Spacer()

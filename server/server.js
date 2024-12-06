@@ -8,6 +8,8 @@ const http = require('http'); // Import HTTP module to work with Socket.IO
 const { Server } = require('socket.io');
 const s3Routes = require('./routes/S3Routes.js');
 const userRoutes = require('./routes/UserRoutes.js');
+const projectRoutes = require('./routes/ProjectRoutes.js');
+const tagRoutes = require('./routes/TagRoutes.js');
 const validateFirebaseToken = require('./utils/validate.js');
 
 dotenv.config();
@@ -46,7 +48,9 @@ app.get('/', (req, res) => {
 });
 app.use('/s3', s3Routes);
 app.use('/users', userRoutes);
-
+app.use('/projects', projectRoutes);
+app.use('/tags', tagRoutes);
+ 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {

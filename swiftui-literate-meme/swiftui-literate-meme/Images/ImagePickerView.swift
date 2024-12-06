@@ -15,13 +15,13 @@ struct ImagePickerView: View {
     var body: some View {
         PhotosPicker(
             selection: $imagePickerViewModel.selectedItems,
-            maxSelectionCount: uploadType == "profile" ? 1 : 6,
+            maxSelectionCount: uploadType == "profile" || uploadType == "tag" ? 1 : 6,
             matching: uploadType == "profile" ? .any(of: [.images]) : .any(of: [.images, .videos]),
             photoLibrary: .shared()) {
-                Image(systemName: "person.2.crop.square.stack.fill").resizable()
+                Image(systemName: uploadType == "tag" ? "tag.circle" : "photo.badge.plus").resizable()
                     .fontWeight(.ultraLight)
                     .foregroundStyle(.black)
-                    .frame(width: 50, height: 50)
+                    .frame(width: uploadType == "tag" ? 50 : 60, height: 50)
             }
             .onChange(of: imagePickerViewModel.selectedItems) { oldItems, newItems in
 

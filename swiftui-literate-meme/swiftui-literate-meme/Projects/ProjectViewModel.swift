@@ -1,25 +1,24 @@
 //
-//  UserViewModel.swift
+//  ProjectViewModel.swift
 //  swiftui-literate-meme
 //
-//  Created by m1_air on 11/18/24.
+//  Created by m1_air on 12/4/24.
 //
 
 import Foundation
 import Observation
-import CryptoKit
 
-@Observable class UserViewModel {
+@Observable class ProjectViewModel {
     
-    var user: UserModel = UserModel()
-    var users: [UserModel] = []
-    var baseURL: String = "http://127.0.0.1:4000/users"
+    var project: ProjectModel = ProjectModel()
+    var projects: [ProjectModel] = []
+    var baseURL: String = "http://127.0.0.1:4000/projects"
     var error: String = ""
     var token: String = ""
     
-    func createNewUser() async -> Bool {
-            print("Creating a new user.")
-            guard let url = URL(string: "\(baseURL)/user") else { return false }
+    func createNewProject() async -> Bool {
+            print("Creating a new project.")
+            guard let url = URL(string: "\(baseURL)/project") else { return false }
 
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
@@ -28,9 +27,11 @@ import CryptoKit
 
 
             let body: [String: Any] = [
-                "uid": user.uid,
-                "username": user.username,
-                "userPhotoURL": user.userPhotoURL
+                "uid": project.uid,
+                "photos": project.photos,
+                "title": project.title,
+                "description": project.description,
+                "tags": project.tags
             ]
 
             guard let jsonData = try? JSONSerialization.data(withJSONObject: body, options: []) else { return false}
@@ -41,23 +42,23 @@ import CryptoKit
                 let (_, response) = try await URLSession.shared.data(for: request)
 
                 if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                    print("New user successfully added to MongoDB.")
+                    print("New project successfully added to MongoDB.")
                     return true
                 } else {
-                    self.error = "Error creating user: \(response)"
+                    self.error = "Error creating tag: \(response)"
                     print(self.error)
                     return false
                 }
             } catch {
-                self.error = "Error submitting data for new user: \(error.localizedDescription)"
+                self.error = "Error submitting data for new project: \(error.localizedDescription)"
                 print(self.error)
                 return false
             }
         }
     
     // Get a user by uid
-    func getUserByUid() async -> Bool {
-        guard let url = URL(string: "\(baseURL)/user/\(user.uid)") else { return false }
+    func getProjectByUid() async -> Bool {
+        guard let url = URL(string: "\(baseURL)/project/\(project.uid)") else { return false }
 
         var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -65,18 +66,18 @@ import CryptoKit
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                self.error = "Error fetching user by UID."
+                self.error = "Error fetching project by UID."
                 return false
             }
-            self.user = try JSONDecoder().decode(UserModel.self, from: data)
+            self.project = try JSONDecoder().decode(ProjectModel.self, from: data)
             return true
         } catch {
-            self.error = "Error fetching user: \(error.localizedDescription)"
+            self.error = "Error fetching project: \(error.localizedDescription)"
             return false
         }
     }
     
-    func fetchAllUsers() async -> Bool {
+    func fetchAllProjects() async -> Bool {
         guard let url = URL(string: "\(baseURL)/") else {
             self.error = "Invalid URL."
             return false
@@ -102,11 +103,11 @@ import CryptoKit
 
             if httpResponse.statusCode == 200 {
                 do {
-                    let decodedUsers = try JSONDecoder().decode([UserModel].self, from: data)
-                    self.users = decodedUsers
+                    let decodedProjects = try JSONDecoder().decode([ProjectModel].self, from: data)
+                    self.projects = decodedProjects
                     return true
                 } catch {
-                    self.error = "Error decoding users: \(error.localizedDescription)"
+                    self.error = "Error decoding project: \(error.localizedDescription)"
                     return false
                 }
             } else {
@@ -114,14 +115,13 @@ import CryptoKit
                 return false
             }
         } catch {
-            self.error = "Error fetching users: \(error.localizedDescription)"
+            self.error = "Error fetching project: \(error.localizedDescription)"
             return false
         }
     }
     
-    // Update a user by uid
-    func updateUserByUid(uid: String) async -> Bool {
-        guard let url = URL(string: "\(baseURL)/user/\(uid)") else { return false }
+    func updateProjectByUid(uid: String) async -> Bool {
+        guard let url = URL(string: "\(baseURL)/project/\(uid)") else { return false }
 
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
@@ -129,8 +129,10 @@ import CryptoKit
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
         let body: [String: Any] = [
-            "username": user.username,
-            "userPhotoURL": user.userPhotoURL
+            "photos": project.photos,
+            "title": project.title,
+            "description": project.description,
+            "tags": project.tags
         ]
 
         guard let jsonData = try? JSONSerialization.data(withJSONObject: body, options: []) else { return false }
@@ -141,18 +143,17 @@ import CryptoKit
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                 return true
             } else {
-                self.error = "Error updating user: \(response)"
+                self.error = "Error updating project: \(response)"
                 return false
             }
         } catch {
-            self.error = "Error updating user: \(error.localizedDescription)"
+            self.error = "Error updating project: \(error.localizedDescription)"
             return false
         }
     }
 
-    // Delete a user by uid
-    func deleteUserByUid(uid: String) async -> Bool {
-        guard let url = URL(string: "\(baseURL)/user/\(uid)") else { return false }
+    func deleteProjectByUid(uid: String) async -> Bool {
+        guard let url = URL(string: "\(baseURL)/project/\(uid)") else { return false }
 
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -163,13 +164,13 @@ import CryptoKit
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                 return true
             } else {
-                self.error = "Error deleting user: \(response)"
+                self.error = "Error deleting project: \(response)"
                 return false
             }
         } catch {
-            self.error = "Error deleting user: \(error.localizedDescription)"
+            self.error = "Error deleting project: \(error.localizedDescription)"
             return false
         }
     }
-
+    
 }

@@ -8,19 +8,11 @@ router.post("/user", validateFirebaseToken, (req, res) => {
     const uid = req.body.uid;
     const userPhotoURL = req.body.userPhotoURL;
     const username = req.body.username;
-    const connections = req.body.connections;
-    const media = req.body.media;
-    const locationLat = req.body.locationLat;
-    const locationLong = req.body.locationLong;
   
     const newUser = new User({
       uid,
       userPhotoURL,
-      connections,
-      username,
-      media,
-      locationLat,
-      locationLong
+      username
     });
   
     newUser
