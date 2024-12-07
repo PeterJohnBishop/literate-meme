@@ -12,12 +12,13 @@ import Observation
     
     var tag: TagModel = TagModel()
     var tags: [TagModel] = []
-    var baseURL: String = "http://127.0.0.1:4000/tags"
+    var baseURL: String = "http://192.168.0.134:4000/tags"
     var error: String = ""
     var token: String = ""
     
     func createNewTag() async -> Bool {
             print("Creating a new tag.")
+        
             guard let url = URL(string: "\(baseURL)/tag") else { return false }
 
             var request = URLRequest(url: url)
@@ -25,12 +26,14 @@ import Observation
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
+        print("Current token: \(token)")
 
             let body: [String: Any] = [
                 "uid": tag.uid,
-                "icon": tag.icon,
                 "tag": tag.tag
             ]
+        
+        print("Sending tag: \(String(describing: body))" )
 
             guard let jsonData = try? JSONSerialization.data(withJSONObject: body, options: []) else { return false}
 
@@ -54,7 +57,6 @@ import Observation
             }
         }
     
-    // Get a user by uid
     func getTagByUid() async -> Bool {
         guard let url = URL(string: "\(baseURL)/tag/\(tag.uid)") else { return false }
 
@@ -76,6 +78,9 @@ import Observation
     }
     
     func fetchAllTags() async -> Bool {
+        
+        print("Requesting all tags.")
+        
         guard let url = URL(string: "\(baseURL)/") else {
             self.error = "Invalid URL."
             return false
@@ -86,6 +91,8 @@ import Observation
             self.error = "Error: No token found."
             return false
         }
+        
+        print("Current token: \(token)")
 
         var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -128,7 +135,6 @@ import Observation
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
         let body: [String: Any] = [
-            "icon": tag.icon,
             "tag": tag.tag
         ]
 

@@ -12,7 +12,7 @@ import Observation
     
     var project: ProjectModel = ProjectModel()
     var projects: [ProjectModel] = []
-    var baseURL: String = "http://127.0.0.1:4000/projects"
+    var baseURL: String = "http://192.168.0.134:4000/projects"
     var error: String = ""
     var token: String = ""
     

@@ -9,12 +9,10 @@ import Foundation
 
 struct TagModel: Codable, Equatable {
     var uid: String
-    var icon: String
     var tag: String
     
-    init(uid: String = "", icon: String = "", tag: String = "") {
+    init(uid: String = "", tag: String = "") {
         self.uid = uid
-        self.icon = icon
         self.tag = tag
     }
 }

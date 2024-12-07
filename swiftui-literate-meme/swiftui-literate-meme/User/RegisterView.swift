@@ -32,12 +32,15 @@ struct RegisterView: View {
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
                             .padding()
+                            .textContentType(.oneTimeCode)
                         
                         SecureField("Confirm Password", text: $confirmPassword)
                             .tint(.black)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
                             .padding()
+                            .textContentType(.oneTimeCode)
+
                         Button("Submit", action: {
                             if confirmPassword == auth.password {
                                 Task{

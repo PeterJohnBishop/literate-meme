@@ -4,15 +4,17 @@ const validateFirebaseToken = require('../utils/validate.js')
 
 router.post("/tag", validateFirebaseToken, (req, res) => {
 
+    console.log("Create tag request incomming.");
+
     const uid = req.body.uid;
-    const icon = req.body.icon;
     const tag = req.body.tag;
   
     const newTag = new Tag({
       uid,
-      icon,
       tag
     });
+
+    console.log(`Saving ${newTag}`);
   
     newTag
       .save()

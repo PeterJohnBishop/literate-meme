@@ -64,7 +64,7 @@ struct ProfileView: View {
                         }).frame(width: 50, height: 50)
                             .padding()
                             .navigationDestination(isPresented: $addProject, destination: {
-                                SubmitProjectView()
+                                TagView()
                             })
                         Spacer()
                         Button(action: {
