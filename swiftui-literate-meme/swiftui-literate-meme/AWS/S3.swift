@@ -11,10 +11,18 @@ import UIKit
 
 @Observable class S3ViewModel {
     var imageUrl: String = ""
+    var imageUrls: [String] = []
+    var error: String = ""
     
-    func uploadImageToS3(image: UIImage, token: String) async -> Bool {
+    func uploadImageToS3(image: UIImage) async -> Bool {
         guard let url = URL(string: "http://192.168.0.134:4000/s3/upload") else { return false }
         guard let imageData = image.jpegData(compressionQuality: 0.8) else { return false }
+        
+        guard let token = UserDefaults.standard.string(forKey: "authToken") else {
+            self.error = "Error: No token found."
+            print(self.error)
+            return false
+        }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -48,6 +56,60 @@ import UIKit
                 return true
             } else {
                 print("Failed to parse JSON or 'imageUrl' not found.")
+                return false
+            }
+        } catch {
+            print("Error:", error)
+            return false
+        }
+    }
+    
+    func uploadImagesToS3(images: [UIImage]) async -> Bool {
+        guard let url = URL(string: "http://192.168.0.134:4000/s3/upload") else { return false }
+        guard let token = UserDefaults.standard.string(forKey: "authToken") else {
+            self.error = "Error: No token found."
+            print(self.error)
+            return false
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let boundary = UUID().uuidString
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+
+        for (index, image) in images.enumerated() {
+            guard let imageData = image.jpegData(compressionQuality: 0.8) else { continue }
+
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition: form-data; name=\"images\"; filename=\"image\(index).jpg\"\r\n".data(using: .utf8)!)
+            body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+            body.append(imageData)
+            body.append("\r\n".data(using: .utf8)!)
+        }
+
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        request.httpBody = body
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("HTTP Error: \(httpResponse.statusCode)")
+                return false
+            }
+
+            // Parse JSON response to extract the uploaded URLs
+            if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+               let uploadURLs = json["uploadURLs"] as? [String] {
+                print("Uploaded URLs:", uploadURLs)
+                imageUrls = uploadURLs
+                return true
+            } else {
+                print("Failed to parse JSON or 'uploadURLs' not found.")
                 return false
             }
         } catch {

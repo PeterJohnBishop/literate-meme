@@ -10,12 +10,15 @@ import SwiftUI
 struct ProfileView: View {
     @State var auth: FireAuthViewModel = FireAuthViewModel()
     @State var userViewModel: UserViewModel = UserViewModel()
+    @State var postViewModel: PostViewModel = PostViewModel()
     @State var userUID: String = ""
     @State var addProject: Bool = false
     @State var showScanner: Bool = false
     @State var scannedText: String = ""
     @State var responseText: String = ""
     @State var showAlert: Bool = false
+    @State var createPost: Bool = false
+    @State var showPosts: Bool = false
     
     var body: some View {
         NavigationStack{
@@ -55,45 +58,36 @@ struct ProfileView: View {
                             .fontWeight(.ultraLight)
                             .shadow(color: Color.black.opacity(0.3), radius: 10, x: 5, y: 15)
                     }
-                    HStack{
-                        Spacer()
-                        Button(action: {
-                            addProject = true
-                        }, label: {
-                            Image(systemName: "square.and.arrow.up.circle").resizable().frame(width: 50, height: 50).foregroundStyle(.black)
-                        }).frame(width: 50, height: 50)
-                            .padding()
-                            .navigationDestination(isPresented: $addProject, destination: {
-                                TagView()
-                            })
-                        Spacer()
-                        Button(action: {
-                            // see all projects
-                        }, label: {
-                            Image(systemName: "list.bullet.below.rectangle").resizable().frame(width: 50, height: 50).foregroundStyle(.black)
-                        }).frame(width: 50, height: 50)
-                            .padding()
-                        Spacer()
-                        Button(action: {
-                            // see all posts
-                        }, label: {
-                            Image(systemName: "list.bullet.rectangle.portrait").resizable().frame(width: 50, height: 50).foregroundStyle(.black)
-                        }).frame(width: 50, height: 50)
-                            .padding()
-                        Spacer()
-                        Button(action: {
-                            // see all messages
-                        }, label: {
-                            Image(systemName: "message").resizable().frame(width: 50, height: 50).foregroundStyle(.black)
-                        }).frame(width: 50, height: 50) 
-                            .padding()
-                        Spacer()
-                    }
+                    Button(action: {
+                        createPost = true
+                    }, label: {
+                        Image(systemName: "plus.rectangle.on.rectangle")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .foregroundStyle(.black)
+                    }).navigationDestination(isPresented: $createPost, destination: {
+                        CreatePostView()
+                    })
+                    .padding()
+                    if showPosts {
+                                    ForEach(postViewModel.posts.indices, id: \.self) { index in
+                                        HStack{
+                                            Group{
+                                                Text(postViewModel.posts[index].title).fontWeight(.bold).foregroundStyle(.black)
+                                            }.onTapGesture {
+                                                
+                                            }
+                                        }
+                                    }
+                                }
                     Spacer()
                 }
                 Spacer()
             }.onAppear{
                     auth.fetchFirebaseAuthToken()
+                Task {
+                    showPosts = await postViewModel.fetchAllPosts()
+                }
             }
             .onChange(of: auth.token, {
                 oldValue, newValue in

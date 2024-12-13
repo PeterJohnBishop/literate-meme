@@ -13,7 +13,7 @@ struct ProfileSetupView: View {
     @State var s3ViewModel: S3ViewModel = S3ViewModel()
     @State var imagePickerViewModel: ImagePickerViewModel = ImagePickerViewModel()
     @State var userViewModel: UserViewModel = UserViewModel()
-    @State var selectedImage: UIImage?
+    @State var selectedImages: [UIImage] = [] // Changed to non-optional
     @State var showCamera: Bool = false
     @State var sourceType: SourceType = .camera
     @State var uploaded: Bool = false
@@ -21,13 +21,14 @@ struct ProfileSetupView: View {
     @State var errorMessage: String = ""
     @State var showAlert: Bool = false
     @State var saved: Bool = false
+    @State var uploadType: String = "profile"
 
     
     var body: some View {
         VStack{
             Spacer()
-            if let selectedImage = selectedImage {
-                Image(uiImage: selectedImage)
+            if !selectedImages.isEmpty {
+                Image(uiImage: selectedImages[0])
                     .resizable()
                     .scaledToFill()
                     .frame(width: 325, height: 325)
@@ -43,11 +44,11 @@ struct ProfileSetupView: View {
                 }
             HStack{
                 Spacer()
-                ImagePickerView(imagePickerViewModel: $imagePickerViewModel, uploadType: "profile")
+                ImagePickerView(imagePickerViewModel: $imagePickerViewModel, uploadType: $uploadType)
                     .onChange(of: imagePickerViewModel.images, {
                         oldValue, newValue in
                         if !newValue.isEmpty {
-                            selectedImage = imagePickerViewModel.images[0]
+                            selectedImages = imagePickerViewModel.images
                         }
                     }).padding()
                 Spacer()
@@ -61,13 +62,13 @@ struct ProfileSetupView: View {
                         .foregroundStyle(.black)
 
                 }).sheet(isPresented: $showCamera) {
-                    accessMediaView(selectedImage: $selectedImage, sourceType: sourceType).ignoresSafeArea()
+                    accessMediaView(selectedImages: $selectedImages, sourceType: sourceType).ignoresSafeArea()
                 }.padding()
                 Spacer()
                 Button(action: {
-                    if let selectedImage = selectedImage {
+                    if !selectedImages.isEmpty {
                         Task{
-                            uploaded = await s3ViewModel.uploadImageToS3(image: selectedImage, token: UserDefaults.standard.string(forKey: "authToken") ?? "invalidToken")
+                            uploaded = await s3ViewModel.uploadImageToS3(image: selectedImages[0])
                         }
                     }
                 }, label: {
@@ -97,7 +98,6 @@ struct ProfileSetupView: View {
                             isSuccess, message in
                             if isSuccess {
                                 Task{
-                                    userViewModel.token = UserDefaults.standard.string(forKey: "authToken")!
                                     userViewModel.user.uid = auth.user!.uid
                                     userViewModel.user.username = (auth.user?.displayName)!
                                     userViewModel.user.userPhotoURL = (auth.user?.photoURL!.absoluteString)!

@@ -15,7 +15,6 @@ import CryptoKit
     var users: [UserModel] = []
     var baseURL: String = "http://127.0.0.1:4000/users"
     var error: String = ""
-    var token: String = ""
     
     func createNewUser() async -> Bool {
             print("Creating a new user.")
@@ -24,8 +23,6 @@ import CryptoKit
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-
 
             let body: [String: Any] = [
                 "uid": user.uid,
@@ -58,6 +55,11 @@ import CryptoKit
     // Get a user by uid
     func getUserByUid() async -> Bool {
         guard let url = URL(string: "\(baseURL)/user/\(user.uid)") else { return false }
+        guard let token = UserDefaults.standard.string(forKey: "authToken") else {
+            self.error = "Error: No token found."
+            print(self.error)
+            return false
+        }
 
         var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -81,10 +83,9 @@ import CryptoKit
             self.error = "Invalid URL."
             return false
         }
-        
-        // Retrieve the JWT token from UserDefaults
-        guard let token = UserDefaults.standard.string(forKey: "jwt") else {
+        guard let token = UserDefaults.standard.string(forKey: "authToken") else {
             self.error = "Error: No token found."
+            print(self.error)
             return false
         }
 
@@ -122,6 +123,11 @@ import CryptoKit
     // Update a user by uid
     func updateUserByUid(uid: String) async -> Bool {
         guard let url = URL(string: "\(baseURL)/user/\(uid)") else { return false }
+        guard let token = UserDefaults.standard.string(forKey: "authToken") else {
+            self.error = "Error: No token found."
+            print(self.error)
+            return false
+        }
 
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
@@ -153,6 +159,11 @@ import CryptoKit
     // Delete a user by uid
     func deleteUserByUid(uid: String) async -> Bool {
         guard let url = URL(string: "\(baseURL)/user/\(uid)") else { return false }
+        guard let token = UserDefaults.standard.string(forKey: "authToken") else {
+            self.error = "Error: No token found."
+            print(self.error)
+            return false
+        }
 
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"

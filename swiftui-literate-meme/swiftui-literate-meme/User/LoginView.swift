@@ -11,8 +11,7 @@ struct LoginUserView: View {
     @State var auth: FireAuthViewModel = FireAuthViewModel()
     @State var newUser: Bool = false
     @State var showAlert: Bool = false
-    
-    
+        
     var body: some View {
         NavigationStack{
                     VStack{

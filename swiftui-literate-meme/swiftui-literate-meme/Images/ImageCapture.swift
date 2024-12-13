@@ -10,7 +10,7 @@ import SwiftUI
 import PhotosUI
 
 struct accessMediaView: UIViewControllerRepresentable {
-    @Binding var selectedImage: UIImage?
+    @Binding var selectedImages: [UIImage]
     @Environment(\.presentationMode) var isPresented
     var sourceType: SourceType // Enum for camera or photo library
     
@@ -59,7 +59,7 @@ class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerContro
     // Handle image selection from UIImagePickerController (Camera)
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let selectedImage = info[.originalImage] as? UIImage {
-            self.picker.selectedImage = selectedImage
+            self.picker.selectedImages.append(selectedImage)
         }
         self.picker.isPresented.wrappedValue.dismiss()
     }
@@ -78,7 +78,7 @@ class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerContro
             result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
                 if let uiImage = image as? UIImage {
                     DispatchQueue.main.async {
-                        self?.picker.selectedImage = uiImage
+                        self?.picker.selectedImages.append(uiImage) 
                     }
                 }
             }

@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const User = require("../models/UserModel");
-const validateFirebaseToken = require('../utils/validate.js')
+const validateFirebaseToken = require('../utils/validate.js');
 
 // create user document in mongodb
 router.post("/user", validateFirebaseToken, (req, res) => {
