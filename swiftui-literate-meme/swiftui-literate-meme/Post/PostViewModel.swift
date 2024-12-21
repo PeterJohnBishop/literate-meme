@@ -11,7 +11,7 @@ import Observation
 @Observable class PostViewModel {
     var post: PostModel = PostModel()
     var posts: [PostModel] = []
-    var baseURL: String = "http://127.0.0.1:4000/posts"
+    var baseURL: String = "http://192.168.0.134:4000/posts"
     var error: String = ""
 
     func createNewPost() async -> Bool {

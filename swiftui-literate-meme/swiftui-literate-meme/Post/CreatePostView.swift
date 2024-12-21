@@ -21,6 +21,9 @@ struct CreatePostView: View {
     var body: some View {
         ScrollView {
             ImageUploadView(s3ViewModel: $s3ViewModel, imagePickerViewModel: $imagePickerViewModel, selectedImages: $selectedImages, showCamera: $showCamera, sourceType: $sourceType, uploaded: $uploaded)
+                .onChange(of: s3ViewModel.imageUrls) { oldValue, newValue in
+                    postViewModel.post.photos = newValue
+                }
             TextField("Title", text: $postViewModel.post.title).padding()
             TextEditor(text: $postViewModel.post.content)
                 .frame(height: 300)
@@ -33,7 +36,6 @@ struct CreatePostView: View {
                 .tint(.black)
                 .padding()
             Button {
-                postViewModel.post.photos = s3ViewModel.imageUrls
                 Task{
                     submitted = await postViewModel.createNewPost()
                 }

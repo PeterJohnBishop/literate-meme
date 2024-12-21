@@ -53,32 +53,4 @@ router.post('/upload', upload.single('image'), validateFirebaseToken, async (req
   }
 });
 
-router.post('/uploadFiles', upload.array('images', 10), validateFirebaseToken, async (req, res) => {
-  const bucketName = process.env.AWS_REKOGNITION_BUCKET;
-
-  try {
-    const uploadPromises = req.files.map(async (file) => {
-      const filePath = file.path;
-      const key = `uploads/${Date.now()}_${file.originalname}`;
-      
-      // Upload to S3
-      const imageUrl = await uploadImageToS3(filePath, bucketName, key);
-      
-      // Remove file from local storage
-      fs.unlinkSync(filePath);
-
-      return imageUrl;
-    });
-
-    // Wait for all uploads to complete
-    const imageUrls = await Promise.all(uploadPromises);
-    
-    console.log(imageUrls);
-    res.status(200).json({ uploadURLs: imageUrls });
-  } catch (error) {
-    console.error('Error uploading files:', error);
-    res.status(500).json({ error: 'Failed to upload images' });
-  }
-});
-
 module.exports = router;
